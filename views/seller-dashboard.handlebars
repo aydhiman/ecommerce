@@ -1,0 +1,199 @@
+```handlebars
+<h1 style="margin-bottom: 2rem;">Seller Dashboard</h1>
+
+<!-- Stats Cards -->
+<div class="grid grid-4" style="margin-bottom: 3rem;">
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #4CAF50, #45a049);">
+        <h2 style="color: white; margin-bottom: 0.5rem;">{{stats.totalProducts}}</h2>
+        <p style="color: white;">Total Products</p>
+    </div>
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #2196F3, #1976D2);">
+        <h2 style="color: white; margin-bottom: 0.5rem;">{{stats.totalOrders}}</h2>
+        <p style="color: white;">Total Orders</p>
+    </div>
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #FF9800, #F57C00);">
+        <h2 style="color: white; margin-bottom: 0.5rem;">${{stats.totalRevenue}}</h2>
+        <p style="color: white;">Total Revenue</p>
+    </div>
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
+        <h2 style="color: white; margin-bottom: 0.5rem;">{{stats.pendingOrders}}</h2>
+        <p style="color: white;">Pending Orders</p>
+    </div>
+</div>
+
+<!-- Add Product Form -->
+<div class="card" style="margin-bottom: 3rem;">
+    <h2 style="margin-bottom: 1.5rem;">Add New Product</h2>
+    <form method="POST" action="/seller/products" enctype="multipart/form-data" style="padding: 0;">
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label for="name">Product Name:</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price ($):</label>
+                <input type="number" name="price" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" name="category" required>
+            </div>
+            <div class="form-group">
+                <label for="stock">Stock Quantity:</label>
+                <input type="number" name="stock" min="0" value="0">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea name="description" required rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="image">Product Image:</label>
+            <input type="file" name="image" accept="image/*">
+        </div>
+        <button type="submit" class="btn btn-primary">Add Product</button>
+    </form>
+</div>
+
+<!-- Products List -->
+<div class="card" style="margin-bottom: 3rem;">
+    <h2 style="margin-bottom: 1.5rem;">Your Products ({{products.length}})</h2>
+    {{
+#if
+ products.length}}
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{
+#each
+ products}}
+                    <tr>
+                        <td>
+                            <img src="/uploads/{{this.image}}" alt="{{this.name}}" 
+                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"
+                                 onerror="this.src='/uploads/default-product.jpg'">
+                        </td>
+                        <td><strong>{{this.name}}</strong></td>
+                        <td>${{this.price}}</td>
+                        <td>{{this.stock}}</td>
+                        <td>{{this.category}}</td>
+                        <td>
+                            {{
+#if
+ this.isActive}}
+                                <span style="color: #4CAF50;">Active</span>
+                            {{else}}
+                                <span style="color: #f44336;">Inactive</span>
+                            {{
+/if
+}}
+                        </td>
+                        <td>
+                            <a href="/product/{{this._id}}" class="btn btn-secondary" style="margin-right: 0.5rem;">View</a>
+                            <!-- Edit/Delete functionality can be added here -->
+                        </td>
+                    </tr>
+                    {{
+/each
+}}
+                </tbody>
+            </table>
+        </div>
+    {{else}}
+        <p style="text-align: center; color: #666; padding: 2rem;">No products added yet. Add your first product above!</p>
+    {{
+/if
+}}
+</div>
+
+<!-- Recent Orders -->
+<div class="card">
+    <h2 style="margin-bottom: 1.5rem;">Recent Orders ({{orders.length}})</h2>
+    {{
+#if
+ orders.length}}
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{
+#each
+ orders}}
+                    <tr>
+                        <td>{{this._id}}</td>
+                        <td>
+                            <strong>{{this.user.name}}</strong><br>
+                            <small>{{this.user.phone}}</small>
+                        </td>
+                        <td>{{this.items.length}} items</td>
+                        <td>${{this.totalPrice}}</td>
+                        <td>
+                            <span style="padding: 0.2rem 0.8rem; border-radius: 12px; font-size: 0.8rem;
+                                         {{
+#if
+ (eq this.status 'pending')}}background: #fff3cd; color: #856404;{{
+/if
+}}
+                                         {{
+#if
+ (eq this.status 'confirmed')}}background: #d1ecf1; color: #0c5460;{{
+/if
+}}
+                                         {{
+#if
+ (eq this.status 'shipped')}}background: #d4edda; color: #155724;{{
+/if
+}}
+                                         {{
+#if
+ (eq this.status 'delivered')}}background: #d4edda; color: #155724;{{
+/if
+}}
+                                         {{
+#if
+ (eq this.status 'cancelled')}}background: #f8d7da; color: #721c24;{{
+/if
+}}">
+                                {{this.status}}
+                            </span>
+                        </td>
+                        <td>{{formatDate this.createdAt}}</td>
+                        <td>
+                            <!-- Order management functionality can be added here -->
+                            <small>View Details</small>
+                        </td>
+                    </tr>
+                    {{
+/each
+}}
+                </tbody>
+            </table>
+        </div>
+    {{else}}
+        <p style="text-align: center; color: #666; padding: 2rem;">No orders received yet.</p>
+    {{
+/if
+}}
+</div>
+```

@@ -1,0 +1,152 @@
+GET    /products                    # Get all products with pagination
+GET    /products/:id                # Get single product details
+GET    /products/search             # Search products (query params)
+GET    /products/category/:category # Get products by category
+GET    /products/featured           # Get featured products
+GET    /products/:id/reviews        # Get product reviews
+GET    /products/:id/related        # Get related products
+Categories
+GET    /categories                  # Get all categories
+GET    /categories/:id              # Get category details
+GET    /categories/:id/subcategories # Get subcategories
+General
+GET    /brands                      # Get all brands
+GET    /deals                       # Get current deals/offers
+GET    /banners                     # Get homepage banners
+🔐 Protected Endpoints (Authentication Required)
+User Authentication
+POST   /auth/register               # User registration
+POST   /auth/login                  # User login
+POST   /auth/logout                 # User logout
+POST   /auth/refresh-token          # Refresh access token
+POST   /auth/forgot-password        # Request password reset
+POST   /auth/reset-password         # Reset password with token
+POST   /auth/verify-email           # Verify email address
+User Profile
+GET    /user/profile                # Get user profile
+PUT    /user/profile                # Update user profile
+POST   /user/profile/avatar         # Upload profile picture
+GET    /user/addresses              # Get user addresses
+POST   /user/addresses              # Add new address
+PUT    /user/addresses/:id          # Update address
+DELETE /user/addresses/:id          # Delete address
+PUT    /user/change-password        # Change password
+Shopping Cart
+GET    /user/cart                   # Get user's cart
+POST   /user/cart                   # Add item to cart
+PUT    /user/cart/:itemId           # Update cart item quantity
+DELETE /user/cart/:itemId           # Remove item from cart
+DELETE /user/cart                   # Clear entire cart
+POST   /user/cart/apply-coupon      # Apply discount coupon
+DELETE /user/cart/remove-coupon     # Remove applied coupon
+Wishlist
+GET    /user/wishlist               # Get user's wishlist
+POST   /user/wishlist               # Add item to wishlist
+DELETE /user/wishlist/:itemId       # Remove item from wishlist
+POST   /user/wishlist/move-to-cart  # Move wishlist item to cart
+Orders
+GET    /user/orders                 # Get user's order history
+GET    /user/orders/:id             # Get specific order details
+POST   /user/orders                 # Create new order
+PUT    /user/orders/:id/cancel      # Cancel order
+POST   /user/orders/:id/return      # Request order return
+GET    /user/orders/:id/track       # Track order status
+POST   /user/orders/:id/review      # Add order review
+            Reviews & Ratings
+            POST   /user/reviews                # Add product review
+            PUT    /user/reviews/:id            # Update review
+            DELETE /user/reviews/:id            # Delete review
+            GET    /user/reviews                # Get user's reviews
+            Notifications
+            GET    /user/notifications          # Get user notifications
+            PUT    /user/notifications/:id/read # Mark notification as read
+            PUT    /user/notifications/read-all # Mark all as read
+            DELETE /user/notifications/:id      # Delete notification
+            💳 Payment & Checkout
+            Checkout Process
+            POST   /checkout/validate           # Validate cart before checkout
+            POST   /checkout/calculate-shipping # Calculate shipping costs
+            POST   /checkout/apply-coupon       # Apply coupon during checkout
+            POST   /checkout/create-payment-intent # Create payment intent
+            POST   /checkout/confirm-payment    # Confirm payment
+            Payment Methods
+            GET    /user/payment-methods        # Get saved payment methods
+            POST   /user/payment-methods        # Add payment method
+            PUT    /user/payment-methods/:id    # Update payment method
+            DELETE /user/payment-methods/:id    # Delete payment method
+            📊 Admin Endpoints (Admin Authentication Required)
+        Product Management
+        GET    /admin/products              # Get all products (admin view)
+        POST   /admin/products              # Create new product
+        PUT    /admin/products/:id          # Update product
+        DELETE /admin/products/:id          # Delete product
+        POST   /admin/products/:id/images   # Upload product images
+        PUT    /admin/products/:id/status   # Update product status
+        POST   /admin/products/bulk-import  # Bulk import products
+            Category Management
+            GET    /admin/categories            # Get all categories
+            POST   /admin/categories            # Create category
+            PUT    /admin/categories/:id        # Update category
+            DELETE /admin/categories/:id        # Delete category
+        Order Management
+        GET    /admin/orders                # Get all orders
+        GET    /admin/orders/:id            # Get order details
+        PUT    /admin/orders/:id/status     # Update order status
+        PUT    /admin/orders/:id/shipping   # Update shipping info
+        POST   /admin/orders/:id/refund     # Process refund
+User Management
+GET    /admin/users                 # Get all users
+GET    /admin/users/:id             # Get user details
+PUT    /admin/users/:id/status      # Update user status
+DELETE /admin/users/:id             # Delete user account
+Inventory Management
+GET    /admin/inventory             # Get inventory status
+PUT    /admin/inventory/:productId  # Update stock levels
+GET    /admin/inventory/low-stock   # Get low stock alerts
+POST   /admin/inventory/restock     # Restock products
+Analytics & Reports
+GET    /admin/analytics/sales       # Sales analytics
+GET    /admin/analytics/products    # Product performance
+GET    /admin/analytics/users       # User analytics
+GET    /admin/analytics/revenue     # Revenue reports
+GET    /admin/analytics/orders      # Order statistics
+Coupon Management
+GET    /admin/coupons               # Get all coupons
+POST   /admin/coupons               # Create coupon
+PUT    /admin/coupons/:id           # Update coupon
+DELETE /admin/coupons/:id           # Delete coupon
+GET    /admin/coupons/:id/usage     # Get coupon usage stats
+Content Management
+GET    /admin/banners               # Get all banners
+POST   /admin/banners               # Create banner
+PUT    /admin/banners/:id           # Update banner
+DELETE /admin/banners/:id           # Delete banner
+POST   /admin/content/upload        # Upload media files
+🔧 Utility Endpoints
+Search & Filters
+GET    /search                      # Global search
+GET    /search/suggestions          # Search suggestions
+GET    /filters                     # Get available filters
+Location Services
+GET    /locations/countries         # Get countries
+GET    /locations/states/:countryId # Get states by country
+GET    /locations/cities/:stateId   # Get cities by state
+POST   /locations/validate-pincode  # Validate postal code
+Support
+POST   /support/contact             # Contact form submission
+POST   /support/tickets             # Create support ticket
+GET    /user/support/tickets        # Get user's support tickets
+PUT    /user/support/tickets/:id    # Update ticket status
+📱 Additional Features
+Social Features
+POST   /user/reviews/:id/helpful    # Mark review as helpful
+GET    /user/social/friends         # Get friends list
+POST   /user/social/share           # Share product
+Recommendations
+GET    /user/recommendations        # Personalized recommendations
+GET    /products/:id/frequently-bought # Frequently bought together
+Subscriptions (if applicable)
+GET    /user/subscriptions          # Get active subscriptions
+POST   /user/subscriptions          # Create subscription
+PUT    /user/subscriptions/:id      # Update subscription
+DELETE /user/subscriptions/:id      # Cancel subscription

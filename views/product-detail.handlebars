@@ -1,0 +1,65 @@
+```handlebars
+<div class="grid grid-2" style="gap: 3rem;">
+    <div>
+        <img src="/uploads/{{product.image}}" alt="{{product.name}}" 
+             style="width: 100%; max-width: 500px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"
+             onerror="this.src='/uploads/default-product.jpg'">
+    </div>
+    
+    <div class="card">
+        <h1 style="margin-bottom: 1rem; color: #333;">{{product.name}}</h1>
+        <p style="font-size: 2rem; color: #4CAF50; font-weight: bold; margin-bottom: 1rem;">${{product.price}}</p>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <h3 style="margin-bottom: 0.5rem; color: #555;">Description:</h3>
+            <p style="color: #666; line-height: 1.6;">{{product.description}}</p>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <p><strong>Category:</strong> {{product.category}}</p>
+            <p><strong>Stock:</strong> {{product.stock}} available</p>
+            <p><strong>Seller:</strong> {{product.seller.name}}</p>
+        </div>
+        
+        {{
+#if
+ user}}
+            {{
+#if
+ (eq userRole 'user')}}
+                {{
+#if
+ (gt product.stock 0)}}
+                    <form method="POST" action="/cart/add" style="margin-bottom: 1rem;">
+                        <input type="hidden" name="productId" value="{{product._id}}">
+                        <div class="form-group">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" name="quantity" min="1" max="{{product.stock}}" value="1" style="width: 100px;">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">Add to Cart</button>
+                    </form>
+                {{else}}
+                    <div class="error" style="text-align: center;">
+                        <strong>Out of Stock</strong>
+                    </div>
+                {{
+/if
+}}
+            {{
+/if
+}}
+        {{else}}
+            <div style="text-align: center; margin: 2rem 0;">
+                <p style="margin-bottom: 1rem; color: #666;">Please login to add items to cart</p>
+                <a href="/login" class="btn btn-primary">Login to Buy</a>
+            </div>
+        {{
+/if
+}}
+        
+        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+            <a href="/products-list" class="btn btn-secondary">← Back to Products</a>
+        </div>
+    </div>
+</div>
+```
