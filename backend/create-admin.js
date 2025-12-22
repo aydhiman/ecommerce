@@ -13,13 +13,13 @@ const createDefaultAdmin = async () => {
     // Check if any admin exists
     const existingAdmin = await Admin.findOne();
     
-    // if (existingAdmin) {
-    //   console.log('⚠️  Admin already exists');
-    //   console.log('Email:', existingAdmin.email);
-    //   console.log('Name:', existingAdmin.name);
-    //   console.log('\nIf you forgot the password, you can reset it by modifying this script.');
-    //   process.exit(0);
-    // }
+    if (existingAdmin) {
+      console.log('⚠️  Admin already exists');
+      console.log('Email:', existingAdmin.email);
+      console.log('Name:', existingAdmin.name);
+      console.log('\nIf you forgot the password, you can reset it by modifying this script.');
+      process.exit(0);
+    }
 
     // Create default superadmin
     const admin = new Admin({
