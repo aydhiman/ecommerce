@@ -16,6 +16,7 @@ function AddProduct() {
     image: ''
   });
   const [error, setError] = useState('');
+  const [imageUploading, setImageUploading] = useState(false);
 
   const addProductMutation = useMutation({
     mutationFn: async (data) => {
@@ -166,8 +167,18 @@ function AddProduct() {
           <div className="form-group">
             <label htmlFor="image">Product Image</label>
             <ImageUpload 
-              onImageUpload={(imagePath) => setFormData({ ...formData, image: imagePath })}
+              onImageUpload={(imagePath) => {
+                console.log('Image uploaded, path:', imagePath);
+                setFormData({ ...formData, image: imagePath });
+              }}
+              onUploadStart={() => setImageUploading(true)}
+              onUploadEnd={() => setImageUploading(false)}
             />
+            {formData.image && (
+              <p style={{ color: 'green', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                ✓ Image uploaded successfully
+              </p>
+            )}
           </div>
 
           <div className="form-actions">
@@ -181,9 +192,9 @@ function AddProduct() {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={addProductMutation.isPending}
+              disabled={addProductMutation.isPending || imageUploading}
             >
-              {addProductMutation.isPending ? 'Adding...' : 'Add Product'}
+              {imageUploading ? 'Uploading Image...' : addProductMutation.isPending ? 'Adding...' : 'Add Product'}
             </button>
           </div>
         </form>

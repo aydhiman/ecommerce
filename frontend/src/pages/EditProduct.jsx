@@ -17,6 +17,7 @@ function EditProduct() {
     image: ''
   });
   const [error, setError] = useState('');
+  const [imageUploading, setImageUploading] = useState(false);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
@@ -158,8 +159,18 @@ function EditProduct() {
             <label htmlFor="image">Product Image</label>
             <ImageUpload 
               initialImage={formData.image}
-              onImageUpload={(imagePath) => setFormData({ ...formData, image: imagePath })}
+              onImageUpload={(imagePath) => {
+                console.log('Image uploaded, path:', imagePath);
+                setFormData({ ...formData, image: imagePath });
+              }}
+              onUploadStart={() => setImageUploading(true)}
+              onUploadEnd={() => setImageUploading(false)}
             />
+            {formData.image && (
+              <p style={{ color: 'green', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                ✓ Image ready
+              </p>
+            )}
           </div>
 
           <div className="form-actions">
@@ -173,9 +184,9 @@ function EditProduct() {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={updateProductMutation.isPending}
+              disabled={updateProductMutation.isPending || imageUploading}
             >
-              {updateProductMutation.isPending ? 'Updating...' : 'Update Product'}
+              {imageUploading ? 'Uploading Image...' : updateProductMutation.isPending ? 'Updating...' : 'Update Product'}
             </button>
           </div>
         </form>

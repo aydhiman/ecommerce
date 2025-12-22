@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { createServer } from 'http';
 
 // Route Imports
 import authRoutes from './routes/auth.js';
@@ -19,9 +20,15 @@ import userRoutes from './routes/user.js';
 import searchRoutes from './routes/search.js';
 import sellerRoutes from './routes/seller.js';
 import uploadRoutes from './routes/upload.js';
+import adminRoutes from './routes/admin.js';
+import communityRoutes from './routes/community.js';
 
-// Redis Configuration
+// Database & Redis Configuration
+import { connectDB, isConnected, getConnectionStatus } from './config/database.js';
 import redisClient from './config/redis.js';
+
+// WebSocket Configuration
+import { initializeWebSocket } from './websocket/handler.js';
 
 // Configuration
 dotenv.config();
@@ -85,16 +92,16 @@ app.use('/uploads', (req, res, next) => {
     next();
 }, express.static(path.join(__dirname, 'uploads')));
 
-// Ensure uploads directory exists
+// Ensure uploads directory exists (for local storage fallback)
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);
     console.log(`✅ Created uploads directory: ${uploadsDir}`);
 }
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce')
-    .then(() => console.log('✅ Successfully connected to MongoDB'))
+// Database Connection - MongoDB Atlas
+connectDB()
+    .then(() => console.log('✅ Database connection initialized'))
     .catch(err => {
         console.error('❌ MongoDB connection error:', err);
         process.exit(1);
@@ -105,7 +112,7 @@ app.get('/health', (req, res) => {
     res.json({ 
         status: 'ok', 
         timestamp: new Date().toISOString(),
-        mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+        mongodb: isConnected() ? 'connected' : getConnectionStatus(),
         redis: redisClient.isReady ? 'connected' : 'disconnected'
     });
 });
@@ -119,6 +126,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/seller', sellerRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/community', communityRoutes);
 
 // 404 Handler for API
 app.use('/api/*', (req, res) => {
@@ -137,10 +146,17 @@ app.use((err, req, res, next) => {
     });
 });
 
+// Create HTTP server for both Express and WebSocket
+const httpServer = createServer(app);
+
+// Initialize WebSocket server
+initializeWebSocket(httpServer);
+
 // Start Server (skip in test environment)
 if (process.env.NODE_ENV !== 'test') {
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
         console.log(`🚀 Backend API server running on http://localhost:${PORT}`);
+        console.log(`🔌 WebSocket server running on ws://localhost:${PORT}`);
         console.log(`📊 Health check: http://localhost:${PORT}/health`);
         console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
     });

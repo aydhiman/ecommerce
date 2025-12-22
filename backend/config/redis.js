@@ -7,10 +7,10 @@ dotenv.config();
 // Create Redis client with Redis Cloud configuration
 const redisClient = createClient({
     username: process.env.REDIS_USERNAME || 'default',
-    password: process.env.REDIS_PASSWORD || '5D7AtwPFigqhvZpk0zB8kLDVFrxrqLv1',
+    password: process.env.REDIS_PASSWORD || '9eJwZYBIwu5YED9iW85oJckJdqp4PEZl',
     socket: {
-        host: process.env.REDIS_HOST || 'redis-11561.c278.us-east-1-4.ec2.cloud.redislabs.com',
-        port: parseInt(process.env.REDIS_PORT) || 11561
+        host: process.env.REDIS_HOST || 'redis-14455.c57.us-east-1-4.ec2.cloud.redislabs.com',
+        port: parseInt(process.env.REDIS_PORT) || 14455
     }
 });
 

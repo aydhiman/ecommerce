@@ -18,9 +18,13 @@ import SellerDashboard from './pages/SellerDashboard';
 import SellerOrders from './pages/SellerOrders';
 import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import SellerCommunity from './pages/SellerCommunity';
+import BuyerCommunity from './pages/BuyerCommunity';
 
 // Protected Route Component
-const ProtectedRoute = ({ children, requireSeller = false }) => {
+const ProtectedRoute = ({ children, requireSeller = false, requireAdmin = false }) => {
   const { isAuthenticated, user } = useAuthStore();
 
   if (!isAuthenticated) {
@@ -29,6 +33,10 @@ const ProtectedRoute = ({ children, requireSeller = false }) => {
 
   if (requireSeller && user?.role !== 'seller') {
     return <Navigate to="/" replace />;
+  }
+
+  if (requireAdmin && user?.role !== 'admin') {
+    return <Navigate to="/admin/login" replace />;
   }
 
   return children;
@@ -75,6 +83,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/community"
+                element={
+                  <ProtectedRoute>
+                    <BuyerCommunity />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Protected Seller Routes */}
               <Route
@@ -94,6 +110,14 @@ function App() {
                 }
               />
               <Route
+                path="/seller/edit-product/:id"
+                element={
+                  <ProtectedRoute requireSeller={true}>
+                    <EditProduct />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/seller/add-product"
                 element={
                   <ProtectedRoute requireSeller={true}>
@@ -102,10 +126,21 @@ function App() {
                 }
               />
               <Route
-                path="/seller/edit-product/:id"
+                path="/seller/community"
                 element={
                   <ProtectedRoute requireSeller={true}>
-                    <EditProduct />
+                    <SellerCommunity />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 }
               />

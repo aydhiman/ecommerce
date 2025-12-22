@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import api from '../api/axios';
 import { getImageUrl, getPlaceholderImage } from '../utils/imageHelper';
 
-export default function ImageUpload({ onImageUpload, initialImage = null }) {
+export default function ImageUpload({ onImageUpload, onUploadStart, onUploadEnd, initialImage = null }) {
   const [preview, setPreview] = useState(initialImage);
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -35,8 +35,12 @@ export default function ImageUpload({ onImageUpload, initialImage = null }) {
     // Upload file
     try {
       setUploading(true);
+      onUploadStart?.(); // Notify parent that upload started
+      
       const formData = new FormData();
       formData.append('image', file);
+
+      console.log('📤 Uploading file:', file.name, file.type, file.size);
 
       const response = await api.post('/upload', formData, {
         headers: {
@@ -44,16 +48,22 @@ export default function ImageUpload({ onImageUpload, initialImage = null }) {
         }
       });
 
+      console.log('📥 Upload response:', response.data);
+
       if (response.data.success) {
+        console.log('✅ Image uploaded, path:', response.data.imagePath);
+        setPreview(response.data.imagePath); // Update preview with actual URL
         onImageUpload(response.data.imagePath);
       } else {
         setError(response.data.message || 'Upload failed');
       }
     } catch (err) {
-      console.error('Upload error:', err);
+      console.error('❌ Upload error:', err);
+      console.error('Error response:', err.response?.data);
       setError(err.response?.data?.message || 'Failed to upload image');
     } finally {
       setUploading(false);
+      onUploadEnd?.(); // Notify parent that upload ended
     }
   };
 

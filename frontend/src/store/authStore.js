@@ -17,11 +17,12 @@ const useAuthStore = create(
           
           localStorage.setItem('token', token);
           set({ user, token, isAuthenticated: true });
+          
           return { success: true };
         } catch (error) {
           return { 
             success: false, 
-            error: error.response?.data?.error || 'Login failed' 
+            error: error.response?.data?.message || 'Login failed' 
           };
         }
       },
@@ -34,13 +35,20 @@ const useAuthStore = create(
           
           localStorage.setItem('token', token);
           set({ user, token, isAuthenticated: true });
+          
           return { success: true };
         } catch (error) {
           return { 
             success: false, 
-            error: error.response?.data?.error || 'Registration failed' 
+            error: error.response?.data?.message || 'Registration failed' 
           };
         }
+      },
+
+      // Direct auth setter for admin login (which handles its own API call)
+      setAuth: (token, user) => {
+        localStorage.setItem('token', token);
+        set({ user, token, isAuthenticated: true });
       },
 
       logout: () => {
